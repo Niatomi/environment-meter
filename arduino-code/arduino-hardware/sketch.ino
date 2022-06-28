@@ -3,10 +3,11 @@
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
 #include <OneWire.h>
+#include <SPI.h> 
 
-#define UPDATE_LIGHT 10
+#define UPDATE_LIGHT 8
 #define MANUAL_CHECK_BUTTON 2
-#define ZOOMER 10 
+#define ZOOMER 9
 
 /* PH Meter using PH Sensor
 *
@@ -69,6 +70,7 @@ byte customChar[] = {
 void setup() {
   Serial.begin(9600);
   mySerial.begin(9600);
+  SPI.begin();
 
   lcd.createChar(0, customChar);
 
@@ -93,10 +95,19 @@ void manuallCheck() {
 }
 
 void loop() {
+
+  // listenESP();
+
   getData();
   alert();
   printDataOnLcd();
   improvedDelay(10000);
+}
+
+void listenESP() {
+
+
+
 }
 
 void getPHData() {
@@ -286,4 +297,3 @@ void improvedDelay(unsigned int waitTime) {
             cooldownState = false;
     }
 }
-
