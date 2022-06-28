@@ -1,0 +1,10 @@
+server:
+  port: ${server_port:8080}
+spring:
+  application:
+    name: enviroment_service
+  profiles:
+    active: test
+  jpa:
+    hibernate:
+      ddl-auto: update
