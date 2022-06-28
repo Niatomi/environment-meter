@@ -18,6 +18,8 @@
             "includePath": [
                 "c:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\cores\\arduino",
                 "c:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\variants\\standard",
+                "C:\\Users\\playe\\Documents\\Arduino\\libraries\\MAX31850_DallasTemp",
+                "C:\\Users\\playe\\Documents\\Arduino\\libraries\\OneWire",
                 "C:\\Users\\playe\\Documents\\Arduino\\libraries\\LiquidCrystal_I2C",
                 "c:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\Wire\\src",
                 "c:\\Program Files (x86)\\Arduino\\hardware\\arduino\\avr\\libraries\\SoftwareSerial\\src",
