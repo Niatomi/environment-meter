@@ -46,3 +46,4 @@
 
 # Project exclude paths
 /spring-server/target/
+/target/
