@@ -10,7 +10,6 @@ import javax.persistence.Id;
 /**
  * @author niatomi
  */
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -18,8 +17,6 @@ import javax.persistence.Id;
 @ToString
 public class ScheduleConfiguration {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     // TODO: instance choose between ScheduleConfigs

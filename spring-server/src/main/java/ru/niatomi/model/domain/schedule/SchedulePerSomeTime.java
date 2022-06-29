@@ -12,7 +12,6 @@ import java.util.List;
 /**
  * @author niatomi
  */
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,8 +19,6 @@ import java.util.List;
 @ToString
 public class SchedulePerSomeTime {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Integer perDays;

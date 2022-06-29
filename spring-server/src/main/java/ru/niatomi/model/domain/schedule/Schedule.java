@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 /**
  * @author niatomi
  */
-@Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -16,8 +15,6 @@ import java.time.LocalDateTime;
 @ToString
 public class Schedule {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private LocalDateTime checkDateTime;
