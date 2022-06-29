@@ -70,7 +70,6 @@ byte customChar[] = {
 void setup() {
   Serial.begin(9600);
   mySerial.begin(9600);
-  SPI.begin();
 
   lcd.createChar(0, customChar);
 
@@ -96,18 +95,53 @@ void manuallCheck() {
 
 void loop() {
 
-  // listenESP();
+  listenESP();
 
-  getData();
-  alert();
-  printDataOnLcd();
-  improvedDelay(10000);
+  // getData();
+  // alert();
+  // printDataOnLcd();
+  // improvedDelay(10000);
 }
 
+String expression;
 void listenESP() {
 
+  if (Serial.available()){
+    expression = "";
+    expression = Serial.readStringUntil('-');
+    expression = Serial.readStringUntil('-');
+    
+    Serial.println(expression);
+    
+    Serial.end();
+    Serial.begin(9600);
 
+    if (expression.equals("WiFiConfigStart")) {
+      printWiFiMessageOnLcd();
+    }
 
+    if (expression.equals("WiFiConfigEnd")) {
+      printWiFiSuccessOnLcd();
+    }
+
+  }
+
+}
+
+void printWiFiMessageOnLcd() {
+  lcd.clear();
+  lcd.setCursor(0, 1);
+  lcd.print(" Connect via Wi-Fi");
+  lcd.setCursor(0, 2);
+  lcd.print(" ESP8266 ConfigMe");
+}
+
+void printWiFiSuccessOnLcd() {
+  lcd.clear();
+  lcd.setCursor(0, 1);
+  lcd.print(" Successful connect");
+  lcd.setCursor(0, 2);
+  lcd.print(" to local WiFi");
 }
 
 void getPHData() {
