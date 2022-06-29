@@ -79,7 +79,48 @@ void setup() {
 
   // Serial.print(F("DNS 2 --> "));
   // Serial.println(WiFi.dnsIP(1));
+
+  syncTime();
  
+}
+
+/*
+* Синхронизируем время c https://yandex.ru/time/sync.json?geo=51
+*/
+void syncTime () {                                                    
+  if (client.connect("yandex.com", 443)) {                                  
+    client.println("GET /time/sync.json?geo=" + regionID + " HTTP/1.1"); 
+    client.println("Host: yandex.com"); 
+    client.println("Connection: close\r\n"); 
+    delay(200);                           
+
+    char endOfHeaders[] = "\r\n\r\n";                                   
+    if (!client.find(endOfHeaders)) {                                      
+        Serial.println("Invalid response");                                   
+        return ;                                                         
+    }
+    const size_t capacity = 768;                                            
+    DynamicJsonDocument doc(capacity);                                 
+    deserializeJson(doc, client);                    
+    client.stop();                                                         
+    String StringCurrentTime = doc["time"].as<String>().substring(0, 10);   // get local date time witout ms
+    unsigned long CurrentTime = StringToULong(StringCurrentTime);           //   String в unsigned long
+
+    doc.clear();  
+    setTime(CurrentTime); 
+    Serial.println(now());
+  }
+}
+
+unsigned long StringToULong(String Str) { 
+  unsigned long ULong = 0;
+  for (int i = 0; i < Str.length(); i++) {   
+     char c = Str.charAt(i);
+     if (c < '0' || c > '9') break;
+     ULong *= 10;
+     ULong += (c - '0');
+  }
+  return ULong;
 }
 
 void loop() {
