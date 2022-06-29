@@ -67,7 +67,13 @@ byte customChar[] = {
   B00000
 };
 
+boolean lcdWifiAlert = false;
+int standartCO2;
+float standartPH;
+boolean cooldownState;
+
 void setup() {
+  Serial.setTimeout(5);
   Serial.begin(9600);
   mySerial.begin(9600);
 
@@ -87,20 +93,29 @@ void setup() {
   lcd.clear();
   lcd.setCursor(0, 0);
 
+  getStandarts();
+
 }
 
 void manuallCheck() {
-  globalTimeBufferMillis = 100000;
+  cooldownState = false;
 }
 
 void loop() {
+  
+  if (lcdWifiAlert) {
+    printWiFiMessageOnLcd();
+  }
+  improvedDelayWithListener(1000);
 
   listenESP();
+  getData();
+  alertCO2();
+  printDataOnLcd();
 
-  // getData();
-  // alert();
-  // printDataOnLcd();
-  // improvedDelay(10000);
+  improvedDelayWithListener(20000);
+
+
 }
 
 String expression;
@@ -112,20 +127,51 @@ void listenESP() {
     expression = Serial.readStringUntil('-');
     
     Serial.println(expression);
-    
+    improvedDelay(200);
     Serial.end();
     Serial.begin(9600);
 
     if (expression.equals("WiFiConfigStart")) {
       printWiFiMessageOnLcd();
+      lcdWifiAlert = true;
+      improvedDelay(200);
+      return ;
     }
 
     if (expression.equals("WiFiConfigEnd")) {
       printWiFiSuccessOnLcd();
+      lcdWifiAlert = false;
+      improvedDelay(200);
+      printDataOnLcd();
+      return ;
     }
 
-  }
+    if (expression.equals("RequestData")) {
+      getData();
+      improvedDelay(200);
 
+      Serial.print("*Data:");
+      Serial.print(pHValue);
+      Serial.print(":");
+      Serial.print(Etemp);
+      Serial.print(":");
+      Serial.print(Wtemp);
+      Serial.print(":");
+      Serial.print(ppm);
+      Serial.print(":");
+      Serial.print(tdsSensor);
+      Serial.println("*");
+
+      improvedDelay(100);
+      Serial.flush();
+      improvedDelay(100);
+      Serial.end();
+
+    }
+
+    Serial.begin(9600);
+  }
+  
 }
 
 void printWiFiMessageOnLcd() {
@@ -211,6 +257,38 @@ void getPHData() {
     //   delay(1000);
 }
 
+boolean standartsFromServer = false;
+void getStandarts() {
+
+  String expression = "";
+
+  Serial.end();
+  Serial.begin(9600);
+
+  Serial.println("@getStandartsData@");
+  improvedDelay(1000);
+  if (Serial.available()) {
+    expression = Serial.readStringUntil('@');
+    expression = Serial.readStringUntil('@');
+    improvedDelay(1000);
+    Serial.end();
+    Serial.begin(9600);
+
+    standartCO2 = expression.substring(0, expression.indexOf(":")).toInt();
+
+    expression = expression.substring(expression.indexOf(':') + 1, expression.length());
+
+    standartPH = expression.substring(0, expression.length()).toDouble();
+    standartsFromServer = true;
+
+  } else {
+    standartCO2 = 2000;
+    standartPH = 5;
+    standartsFromServer = false;
+  }
+
+}
+
 /*
 * Собираем информацию со всех датчиков
 */
@@ -218,6 +296,7 @@ void getData() {
   getPPMCO2();
   getPPMTDS();
   getPHData();
+  getStandarts();
 }
 
 /*
@@ -271,12 +350,13 @@ void getPPMTDS() {
   digitalWrite(UPDATE_LIGHT, LOW);
 }
 
+
 /*
 * Оповещаем пользователя о 
 * завышенном колличестве CO2 в воздухе
 */
-void alert() {
-  if (ppm >= 1500) {
+void alertCO2() {
+  if (ppm >= standartCO2) {
     tone(ZOOMER, 100, 100);
     improvedDelay(200);
     noTone(ZOOMER);
@@ -324,9 +404,24 @@ void printDataOnLcd() {
 */
 void improvedDelay(unsigned int waitTime) {
     globalTimeBufferMillis = millis();
-    boolean cooldownState = true;
+    cooldownState = true;
 
     while (cooldownState) {
+        if (millis() - globalTimeBufferMillis > waitTime) 
+            cooldownState = false;
+    }
+}
+
+/*
+* Улучшенный метод ожидания
+* Использовать только его, чтобы не ломать счёт времени 
+*/
+void improvedDelayWithListener(unsigned int waitTime) {
+    globalTimeBufferMillis = millis();
+    cooldownState = true;
+
+    while (cooldownState) {
+        listenESP();
         if (millis() - globalTimeBufferMillis > waitTime) 
             cooldownState = false;
     }

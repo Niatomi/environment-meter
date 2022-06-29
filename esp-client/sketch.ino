@@ -8,34 +8,43 @@
 #include <WiFiClient.h>
 #include <TimeLib.h>
 
-#define HTTP_LED D1
-#define SPI_LED D2
+#define HTTP_LED D7
+#define SERIAL_LED D8
 
 void configModeCallback (WiFiManager *myWiFiManager) {
   WiFi.softAPIP();
-  //if you used auto generated SSID, print it
   myWiFiManager->getConfigPortalSSID();
 }
 
 WiFiClient client; 
 
+float pHValue = 0;
+float Etemp = 0;
+float Wtemp = 0;
+unsigned int ppm = 0;
+float tdsSensor;
+
+int standartCO2 = 1500;
+float standartPH = 6.1;
+
 String regionID = "51"; 
 
+unsigned long lastTimeSync;
+unsigned long globalTimeBufferMillis = 0;
+
 void setup() {
+  pinMode(HTTP_LED, OUTPUT);
+  pinMode(SERIAL_LED, OUTPUT);
+
+  digitalWrite(HTTP_LED, HIGH);
+  digitalWrite(SERIAL_LED, HIGH);
+
+  Serial.setTimeout(5);
   Serial.end();
   Serial.begin(9600);
   Serial.flush();
   Serial.setDebugOutput(false); 
    
-
-  pinMode(HTTP_LED, OUTPUT);
-  pinMode(SPI_LED, OUTPUT);
-  pinMode(D4, INPUT);
-  pinMode(D3, INPUT);
-
-  digitalWrite(HTTP_LED, false);
-  digitalWrite(SPI_LED, false);
-  
   WiFiManager wifiManager;
   wifiManager.setDebugOutput(false);
   
@@ -53,42 +62,40 @@ void setup() {
   //here  "AutoConnectAP"
   //and goes into a blocking loop awaiting configuration
   if (!wifiManager.autoConnect("ESP8266 ConfigMe")) {
-
     //reset and try again, or maybe put it to deep sleep
     ESP.reset();
     delay(1000);
   } 
 
-  // String SSID = wifiManager.getWiFiSSID();
-  // String password = wifiManager.getWiFiPass();
-
   Serial.println("-WiFiConfigEnd-");
 
-  //if you get here you have connected to the WiFi
-  // Serial.println(F("WIFIManager connected!"));
-
-  // Serial.print(F("IP --> "));
-  // Serial.println(WiFi.localIP());
-  // Serial.print(F("GW --> "));
-  // Serial.println(WiFi.gatewayIP());
-  // Serial.print(F("SM --> "));
-  // Serial.println(WiFi.subnetMask());
-
-  // Serial.print(F("DNS 1 --> "));
-  // Serial.println(WiFi.dnsIP(0));
-
-  // Serial.print(F("DNS 2 --> "));
-  // Serial.println(WiFi.dnsIP(1));
 
   syncTime();
+  getSchedule();
+
+  awaitEvent();
  
+  digitalWrite(HTTP_LED, LOW);
+  digitalWrite(SERIAL_LED, LOW);
+
+  Serial.end();
+  Serial.begin(9600);
 }
+
+/*
+* Получаем расписание проверок
+*/
+void getSchedule() {
+
+}
+
 
 /*
 * Синхронизируем время c https://yandex.ru/time/sync.json?geo=51
 */
 void syncTime () {                                                    
-  if (client.connect("yandex.com", 443)) {                                  
+  if (client.connect("yandex.com", 443)) { 
+    digitalWrite(HTTP_LED, HIGH);                                 
     client.println("GET /time/sync.json?geo=" + regionID + " HTTP/1.1"); 
     client.println("Host: yandex.com"); 
     client.println("Connection: close\r\n"); 
@@ -103,12 +110,14 @@ void syncTime () {
     DynamicJsonDocument doc(capacity);                                 
     deserializeJson(doc, client);                    
     client.stop();                                                         
+    digitalWrite(HTTP_LED, LOW);
+
     String StringCurrentTime = doc["time"].as<String>().substring(0, 10);   // get local date time witout ms
     unsigned long CurrentTime = StringToULong(StringCurrentTime);           //   String в unsigned long
 
     doc.clear();  
     setTime(CurrentTime); 
-    Serial.println(now());
+    lastTimeSync = now();
   }
 }
 
@@ -124,4 +133,102 @@ unsigned long StringToULong(String Str) {
 }
 
 void loop() {
+  awaitEvent();
+}
+
+
+
+void awaitEvent() {
+  
+
+  // Синхронизируем время каждую неделю
+  if (now() - lastTimeSync >= 604800) {
+    syncTime();
+  }
+
+  if (Serial.available()) {
+      String expression = "";
+      
+
+      expression = Serial.readStringUntil('@');
+      expression = Serial.readStringUntil('@');
+      
+      Serial.end();
+      Serial.begin(9600);
+      improvedDelay(200);
+
+      if (expression.equals("getStandartsData")) {
+        Serial.print("@");
+        Serial.print(standartCO2);
+        Serial.print(":");
+        Serial.print(standartPH);
+        Serial.println("@");
+
+      }
+
+      improvedDelay(200);
+      Serial.end();
+      Serial.begin(9600);
+
+    }
+
+  // Условие по времени
+  if (false) {
+    improvedDelay(1000);
+    Serial.end();
+    Serial.begin(9600);
+
+    Serial.println("-RequestData-");
+    improvedDelay(1000);
+    digitalWrite(SERIAL_LED, HIGH);   
+
+    if (Serial.available()) {
+
+      String expression = "";
+
+      expression = Serial.readStringUntil('*');
+      expression = Serial.readStringUntil('*');
+      
+      improvedDelay(1000);
+      digitalWrite(SERIAL_LED, LOW);   
+      Serial.end();
+      Serial.begin(9600);
+
+      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
+
+      pHValue = expression.substring(0, expression.indexOf(":")).toDouble();
+      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
+
+      Etemp = expression.substring(0, expression.indexOf(":")).toDouble();
+      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
+
+      Wtemp = expression.substring(0, expression.indexOf(":")).toDouble();
+      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
+
+      ppm = expression.substring(0, expression.indexOf(":")).toInt();
+      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
+
+      tdsSensor = expression.substring(0, expression.length()).toDouble();
+      expression = "";
+      
+      Serial.println(pHValue);
+      Serial.println(tdsSensor);
+    }
+  
+  }
+
+}
+
+/*
+* Улучшенный метод ожидания
+* Использовать только его, чтобы не ломать счёт времени 
+*/
+void improvedDelay(unsigned int waitTime) {
+    globalTimeBufferMillis = millis();
+    boolean cooldownState = true;
+
+    while (cooldownState) {
+        if (millis() - globalTimeBufferMillis > waitTime) 
+            cooldownState = false;
+    }
 }
