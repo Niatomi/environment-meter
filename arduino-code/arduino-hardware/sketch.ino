@@ -3,7 +3,6 @@
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
 #include <OneWire.h>
-#include <SPI.h> 
 
 #define UPDATE_LIGHT 8
 #define MANUAL_CHECK_BUTTON 2
@@ -67,7 +66,6 @@ byte customChar[] = {
   B00000
 };
 
-boolean lcdWifiAlert = false;
 int standartCO2;
 float standartPH;
 boolean cooldownState;
@@ -93,9 +91,50 @@ void setup() {
   lcd.clear();
   lcd.setCursor(0, 0);
 
-  getStandarts();
+  Wire.begin(8);                // join i2c bus with address #4         
+  Wire.setTimeout(100);
+  Wire.onRequest(requestHandler);
+  Wire.onReceive(receiveHandler);
 
 }
+
+int aboba = 1024;
+void receiveHandler (int size) {
+  String buff = "";
+  while (Wire.available() > 0) // loop through all but the last
+  {
+    char c = Wire.read(); // receive byte as a character
+    buff.concat(c);         // print the character
+  }
+
+  aboba = buff.toInt();    // receive byte as an integer
+  Serial.println(aboba);
+
+}
+
+void requestHandler() {
+  // getData();
+  String msg = "";
+  Wire.print("Data:");
+  Wire.print(pHValue);
+  Wire.print(":");
+  Wire.print(Etemp);
+  Wire.print(":");
+  Wire.print(Wtemp);
+  Wire.print(":");
+  Wire.print(ppm);
+  Wire.print(":");
+  Wire.print(tdsSensor);
+  Wire.println("$");
+
+  // char buffer[70];
+  // for (int i = 0; i < 70; i++)
+  //   buffer[i] = '$'; 
+  // msg.toCharArray(buffer, 70);
+
+  Wire.write("hello");
+}
+
 
 void manuallCheck() {
   cooldownState = false;
@@ -103,75 +142,11 @@ void manuallCheck() {
 
 void loop() {
   
-  if (lcdWifiAlert) {
-    printWiFiMessageOnLcd();
-  }
-  improvedDelayWithListener(1000);
-
-  listenESP();
   getData();
-  alertCO2();
+  // alertCO2();
   printDataOnLcd();
+  improvedDelay(10000);
 
-  improvedDelayWithListener(20000);
-
-
-}
-
-String expression;
-void listenESP() {
-
-  if (Serial.available()){
-    expression = "";
-    expression = Serial.readStringUntil('-');
-    expression = Serial.readStringUntil('-');
-    
-    Serial.println(expression);
-    improvedDelay(200);
-    Serial.end();
-    Serial.begin(9600);
-
-    if (expression.equals("WiFiConfigStart")) {
-      printWiFiMessageOnLcd();
-      lcdWifiAlert = true;
-      improvedDelay(200);
-      return ;
-    }
-
-    if (expression.equals("WiFiConfigEnd")) {
-      printWiFiSuccessOnLcd();
-      lcdWifiAlert = false;
-      improvedDelay(200);
-      printDataOnLcd();
-      return ;
-    }
-
-    if (expression.equals("RequestData")) {
-      getData();
-      improvedDelay(200);
-
-      Serial.print("*Data:");
-      Serial.print(pHValue);
-      Serial.print(":");
-      Serial.print(Etemp);
-      Serial.print(":");
-      Serial.print(Wtemp);
-      Serial.print(":");
-      Serial.print(ppm);
-      Serial.print(":");
-      Serial.print(tdsSensor);
-      Serial.println("*");
-
-      improvedDelay(100);
-      Serial.flush();
-      improvedDelay(100);
-      Serial.end();
-
-    }
-
-    Serial.begin(9600);
-  }
-  
 }
 
 void printWiFiMessageOnLcd() {
@@ -257,38 +232,6 @@ void getPHData() {
     //   delay(1000);
 }
 
-boolean standartsFromServer = false;
-void getStandarts() {
-
-  String expression = "";
-
-  Serial.end();
-  Serial.begin(9600);
-
-  Serial.println("@getStandartsData@");
-  improvedDelay(1000);
-  if (Serial.available()) {
-    expression = Serial.readStringUntil('@');
-    expression = Serial.readStringUntil('@');
-    improvedDelay(1000);
-    Serial.end();
-    Serial.begin(9600);
-
-    standartCO2 = expression.substring(0, expression.indexOf(":")).toInt();
-
-    expression = expression.substring(expression.indexOf(':') + 1, expression.length());
-
-    standartPH = expression.substring(0, expression.length()).toDouble();
-    standartsFromServer = true;
-
-  } else {
-    standartCO2 = 2000;
-    standartPH = 5;
-    standartsFromServer = false;
-  }
-
-}
-
 /*
 * Собираем информацию со всех датчиков
 */
@@ -296,7 +239,6 @@ void getData() {
   getPPMCO2();
   getPPMTDS();
   getPHData();
-  getStandarts();
 }
 
 /*
@@ -407,21 +349,6 @@ void improvedDelay(unsigned int waitTime) {
     cooldownState = true;
 
     while (cooldownState) {
-        if (millis() - globalTimeBufferMillis > waitTime) 
-            cooldownState = false;
-    }
-}
-
-/*
-* Улучшенный метод ожидания
-* Использовать только его, чтобы не ломать счёт времени 
-*/
-void improvedDelayWithListener(unsigned int waitTime) {
-    globalTimeBufferMillis = millis();
-    cooldownState = true;
-
-    while (cooldownState) {
-        listenESP();
         if (millis() - globalTimeBufferMillis > waitTime) 
             cooldownState = false;
     }

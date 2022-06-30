@@ -4,12 +4,12 @@
 #include <DNSServer.h>
 #include <ESP8266WebServer.h>
 #include "WiFiManager.h"          
-#include <SPI.h> 
 #include <WiFiClient.h>
 #include <TimeLib.h>
+#include <Wire.h>
 
-#define HTTP_LED D7
-#define SERIAL_LED D8
+#define HTTP_LED D8
+#define SERIAL_LED D7
 
 void configModeCallback (WiFiManager *myWiFiManager) {
   WiFi.softAPIP();
@@ -39,11 +39,10 @@ void setup() {
   digitalWrite(HTTP_LED, HIGH);
   digitalWrite(SERIAL_LED, HIGH);
 
-  Serial.setTimeout(5);
-  Serial.end();
+  // Serial.setTimeout(5);
+
   Serial.begin(9600);
-  Serial.flush();
-  Serial.setDebugOutput(false); 
+  Serial.setDebugOutput(true); 
    
   WiFiManager wifiManager;
   wifiManager.setDebugOutput(false);
@@ -53,9 +52,8 @@ void setup() {
 
   //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wifiManager.setAPCallback(configModeCallback);
-  Serial.setDebugOutput(false);
-  Serial.flush();
-  Serial.println("-WiFiConfigStart-");
+
+  Serial.println("WiFiConfigStart");
 
   //fetches ssid and pass and tries to connect
   //if it does not connect it starts an access point with the specified name
@@ -66,20 +64,45 @@ void setup() {
     ESP.reset();
     delay(1000);
   } 
+  Serial.println("WiFiConfigEnd");
 
-  Serial.println("-WiFiConfigEnd-");
+  Wire.begin();
+  Wire.setTimeout(100);
 
-
-  syncTime();
+  // syncTime();
   getSchedule();
 
-  awaitEvent();
- 
   digitalWrite(HTTP_LED, LOW);
   digitalWrite(SERIAL_LED, LOW);
+}
 
-  Serial.end();
-  Serial.begin(9600);
+
+int x = 1024;
+void loop() {
+
+  // Wire.beginTransmission(4);  
+  // Wire.println(x);              
+  // Wire.endTransmission();
+
+  // x++;
+  // delay(1000);
+
+  fetchData();
+
+  delay(1000);
+
+}
+
+void fetchData() {
+  Wire.requestFrom(8, 70);    // request 6 bytes from peripheral device #8
+  String str = "";
+  while (Wire.available()) { // peripheral may send less than requested
+    str = Wire.readStringUntil('$'); // receive a byte as character
+    // str.concat(c);
+    // Serial.print(c);         // print the character
+  }
+  Serial.println(str);
+
 }
 
 /*
@@ -130,93 +153,6 @@ unsigned long StringToULong(String Str) {
      ULong += (c - '0');
   }
   return ULong;
-}
-
-void loop() {
-  awaitEvent();
-}
-
-
-
-void awaitEvent() {
-  
-
-  // Синхронизируем время каждую неделю
-  if (now() - lastTimeSync >= 604800) {
-    syncTime();
-  }
-
-  if (Serial.available()) {
-      String expression = "";
-      
-
-      expression = Serial.readStringUntil('@');
-      expression = Serial.readStringUntil('@');
-      
-      Serial.end();
-      Serial.begin(9600);
-      improvedDelay(200);
-
-      if (expression.equals("getStandartsData")) {
-        Serial.print("@");
-        Serial.print(standartCO2);
-        Serial.print(":");
-        Serial.print(standartPH);
-        Serial.println("@");
-
-      }
-
-      improvedDelay(200);
-      Serial.end();
-      Serial.begin(9600);
-
-    }
-
-  // Условие по времени
-  if (false) {
-    improvedDelay(1000);
-    Serial.end();
-    Serial.begin(9600);
-
-    Serial.println("-RequestData-");
-    improvedDelay(1000);
-    digitalWrite(SERIAL_LED, HIGH);   
-
-    if (Serial.available()) {
-
-      String expression = "";
-
-      expression = Serial.readStringUntil('*');
-      expression = Serial.readStringUntil('*');
-      
-      improvedDelay(1000);
-      digitalWrite(SERIAL_LED, LOW);   
-      Serial.end();
-      Serial.begin(9600);
-
-      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
-
-      pHValue = expression.substring(0, expression.indexOf(":")).toDouble();
-      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
-
-      Etemp = expression.substring(0, expression.indexOf(":")).toDouble();
-      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
-
-      Wtemp = expression.substring(0, expression.indexOf(":")).toDouble();
-      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
-
-      ppm = expression.substring(0, expression.indexOf(":")).toInt();
-      expression = expression.substring(expression.indexOf(':') + 1, expression.length());
-
-      tdsSensor = expression.substring(0, expression.length()).toDouble();
-      expression = "";
-      
-      Serial.println(pHValue);
-      Serial.println(tdsSensor);
-    }
-  
-  }
-
 }
 
 /*
