@@ -15,7 +15,7 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <spring-boot.version>2.3.12.RELEASE</spring-boot.version>
+        <spring-boot.version>2.6.9</spring-boot.version>
         <tomcat.plugin.version>2.2</tomcat.plugin.version>
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <openapi.version>1.6.4</openapi.version>
