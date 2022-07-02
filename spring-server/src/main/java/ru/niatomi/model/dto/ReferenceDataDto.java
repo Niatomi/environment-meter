@@ -15,7 +15,6 @@ import lombok.Setter;
 public class ReferenceDataDto {
     private Integer c02;
 
-    private Integer C02;
     private Double normalPh;
 
 }
