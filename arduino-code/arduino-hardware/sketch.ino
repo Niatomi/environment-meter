@@ -107,8 +107,17 @@ void receiveHandler (int size) {
     buff.concat(c);         // print the character
   }
 
-  aboba = buff.toInt();    // receive byte as an integer
-  Serial.println(aboba);
+
+  if (buff.equals("WiFiConfigStart\r\n")) {
+    isWiFiAlert = true;
+
+  }
+
+  if (buff.equals("WiFiConfigEnd\r\n")) {
+    isWiFiAlert = false;
+  }
+  
+  Serial.println(buff);
 
 }
 
