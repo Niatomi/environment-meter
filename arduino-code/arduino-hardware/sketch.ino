@@ -3,6 +3,7 @@
 #include <LiquidCrystal_I2C.h>
 #include <SoftwareSerial.h>
 #include <OneWire.h>
+#include <Wire.h>
 
 #define UPDATE_LIGHT 8
 #define MANUAL_CHECK_BUTTON 2
@@ -56,13 +57,13 @@ LiquidCrystal_I2C lcd (0x27, 20, 4);
 volatile unsigned long globalTimeBufferMillis = 0;
 
 byte customChar[] = {
-  B00100,
-  B00100,
-  B11111,
-  B00100,
-  B00100,
   B00000,
-  B11111,
+  B01110,
+  B10001,
+  B00100,
+  B01010,
+  B00000,
+  B00100,
   B00000
 };
 
@@ -75,30 +76,35 @@ void setup() {
   Serial.begin(9600);
   mySerial.begin(9600);
 
+  // lcd.createChar(0, customChar);
+  lcd.init();
   lcd.createChar(0, customChar);
+  lcd.home();
 
   sensors.begin();
   pinMode(TDS, INPUT);
   pinMode(UPDATE_LIGHT, OUTPUT);
   pinMode(MANUAL_CHECK_BUTTON, INPUT_PULLUP);
 
+
   digitalWrite(UPDATE_LIGHT, LOW);
 
   attachInterrupt(0, manuallCheck, FALLING);
 
-  lcd.init();
+  // lcd.init();
   lcd.backlight();
-  lcd.clear();
-  lcd.setCursor(0, 0);
+  // lcd.clear();
+  // lcd.setCursor(0, 0);
 
   Wire.begin(8);                // join i2c bus with address #4         
-  Wire.setTimeout(100);
+  // Wire.setTimeout(100);
   Wire.onRequest(requestHandler);
   Wire.onReceive(receiveHandler);
 
 }
 
 int aboba = 1024;
+boolean isWiFiAlert = false;
 void receiveHandler (int size) {
   String buff = "";
   while (Wire.available() > 0) // loop through all but the last
@@ -124,7 +130,7 @@ void receiveHandler (int size) {
 void requestHandler() {
   // getData();
   String msg = "";
-  Wire.print("Data:");
+  Wire.print("$Data:");
   Wire.print(pHValue);
   Wire.print(":");
   Wire.print(Etemp);
@@ -136,12 +142,12 @@ void requestHandler() {
   Wire.print(tdsSensor);
   Wire.println("$");
 
+  
+  
   // char buffer[70];
   // for (int i = 0; i < 70; i++)
   //   buffer[i] = '$'; 
   // msg.toCharArray(buffer, 70);
-
-  Wire.write("hello");
 }
 
 
@@ -151,6 +157,11 @@ void manuallCheck() {
 
 void loop() {
   
+  if (isWiFiAlert) {
+    printWiFiMessageOnLcd();
+    improvedDelay(3000);
+  }
+
   getData();
   // alertCO2();
   printDataOnLcd();
@@ -166,14 +177,6 @@ void printWiFiMessageOnLcd() {
   lcd.print(" ESP8266 ConfigMe");
 }
 
-void printWiFiSuccessOnLcd() {
-  lcd.clear();
-  lcd.setCursor(0, 1);
-  lcd.print(" Successful connect");
-  lcd.setCursor(0, 2);
-  lcd.print(" to local WiFi");
-}
-
 void getPHData() {
 
   // Финальные переменные
@@ -187,19 +190,18 @@ void getPHData() {
     {
         phTot += analogRead(analogPhPin);
         temTot += analogRead(analogTemPin);
-        delay(10);
+        improvedDelay(10);
     }
-    float temAvg = temTot/10;
+    float temAvg = temTot/10.0;
     float phAvg = phTot/10;
-    float temVoltage = temAvg * (5000.0 / 1023.0); //convert sensor reading into milli volt
+    // float temVoltage = temAvg * (1023.0 / 5000.0); //convert sensor reading into milli volt
     float phVoltage =  phAvg * (5.0 / 1023.0); //convert sensor reading into milli volt
  
     sensors.requestTemperatures(); // Send the command to get temperatures
-    Etemp = temVoltage*0.1; //convert milli volt to temperature degree Celsius
+    Etemp = (temAvg/1023.0)*5.0*1000/10; //convert milli volt to temperature degree Celsius
     pHValue = phVoltage*m+C;
     Wtemp = sensors.getTempCByIndex(0);
     float TempDif = fabs(Etemp-Wtemp); //calculating the absolute value of floating
-
     // lcd.clear();
     // lcd.setCursor(0,0);
     // lcd.print("Env.Tmp.");
@@ -324,6 +326,7 @@ void alertCO2() {
 */
 void printDataOnLcd() {
   lcd.clear();
+  lcd.blink_off();
   lcd.setCursor(0, 0);
   lcd.print("C02: ");
   lcd.print(ppm);
@@ -347,6 +350,16 @@ void printDataOnLcd() {
   lcd.write(B11011111);
   lcd.print("C");
 
+  lcd.setCursor(19, 0);
+  lcd.write(0);
+  lcd.setCursor(19, 0);
+  
+  if (isWiFiAlert) {
+    lcd.blink_on();
+  } else {
+    lcd.blink_off();
+  } 
+    
 }
 
 /*
