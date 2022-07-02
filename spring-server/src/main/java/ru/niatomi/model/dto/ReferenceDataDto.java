@@ -1,20 +1,16 @@
 package ru.niatomi.model.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * @author niatomi
  */
-@AllArgsConstructor
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 public class ReferenceDataDto {
     private Integer c02;
 
     private Double normalPh;
 
+    private Double volume;
 }
