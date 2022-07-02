@@ -1,7 +1,8 @@
 {
-    "sketch": "sketch.ino",
-    "output": "build",
-    "board": "arduino:avr:uno",
-    "port": "COM9",
-    "programmer": "arduino:avrispmkii"
+  "sketch": "sketch.ino",
+  "output": "build",
+  "board": "arduino:avr:uno",
+  "output": "build",
+  "port": "COM9",
+  "programmer": "arduino:avrispmkii"
 }

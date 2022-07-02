@@ -1,6 +1,6 @@
 {
-    "port": "COM9",
-    "board": "arduino:avr:uno",
-    "programmer": "arduino:avrispmkii",
-    "sketch": "arduino-hardware\\sketch.ino"
+  "port": "COM9",
+  "board": "arduino:avr:uno",
+  "programmer": "arduino:avrispmkii",
+  "sketch": "arduino-hardware\\sketch.ino"
 }
