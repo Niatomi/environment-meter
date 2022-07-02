@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="create-sensor-table" author="niatomi">
+        <createTable tableName="sensors">
+            <column name="id" type="bigint" autoIncrement="true">
+                <constraints nullable="false" primaryKey="true"/>
+            </column>
+            <column name="co2" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="environment_temperature" type="real(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="liquid_temperature" type="real(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="local_date_time" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ph" type="real(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tds" type="real(2)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
