@@ -19,7 +19,9 @@ public class ESPServiceImpl implements ESPService {
 
     @Override
     public ReferenceDataDto getReferenceData() {
-        return null;
+        Optional<ReferenceData> byId = referenceDataRepository.findById(1);
+        ReferenceData referenceData = byId.get();
+        return referenceDataMapper.map(referenceData);
     }
 
     @Override

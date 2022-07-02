@@ -22,7 +22,7 @@ public class ESPControllerImpl implements ESPController {
 
     @Override
     public ResponseEntity<ReferenceDataDto> getReferenceData() {
-        return null;
+        return ResponseEntity.ok(espService.getReferenceData());
     }
 
     @Override
