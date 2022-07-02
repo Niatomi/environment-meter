@@ -15,7 +15,7 @@ public interface ESPService {
 
     ReferenceDataDto getReferenceData();
 
-    void getTimeSchedule(SensorsDto sensorsDto);
+    void saveSensorData(SensorsDto sensorsDto);
 
     List<TimeScheduleDto> getTimeSchedule();
 

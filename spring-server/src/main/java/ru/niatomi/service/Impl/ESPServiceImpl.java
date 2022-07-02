@@ -23,8 +23,9 @@ public class ESPServiceImpl implements ESPService {
     }
 
     @Override
-    public void getTimeSchedule(SensorsDto sensorsDto) {
-
+    public void saveSensorData(SensorsDto sensorsDto) {
+        Sensors map = sensorsMapper.map(sensorsDto);
+        sensorsRepository.save(map);
     }
 
     @Override

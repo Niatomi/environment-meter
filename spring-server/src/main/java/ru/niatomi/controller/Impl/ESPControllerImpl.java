@@ -31,7 +31,7 @@ public class ESPControllerImpl implements ESPController {
     }
 
     @Override
-    public void getTimeSchedule(SensorsDto sensorsDto) {
-
+    public void saveSensorData(SensorsDto sensorsDto) {
+        espService.saveSensorData(sensorsDto);
     }
 }

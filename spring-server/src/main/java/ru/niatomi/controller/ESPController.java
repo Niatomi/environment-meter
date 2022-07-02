@@ -26,7 +26,7 @@ public interface ESPController {
     public ResponseEntity<List<TimeScheduleDto>> getTimeSchedule();
 
     @PostMapping("/sendSensorsData")
-    public void getTimeSchedule (
+    public void saveSensorData (
             @RequestBody SensorsDto sensorsDto
             );
 
