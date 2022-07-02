@@ -16,6 +16,14 @@ void configModeCallback (WiFiManager *myWiFiManager) {
   myWiFiManager->getConfigPortalSSID();
 }
 
+void transmitData(String data) {
+
+  Wire.beginTransmission(8);  
+  Wire.println(data);              
+  Wire.endTransmission();
+
+}
+
 WiFiClient client; 
 
 float pHValue = 0;
@@ -43,17 +51,19 @@ void setup() {
 
   Serial.begin(9600);
   Serial.setDebugOutput(true); 
+  Wire.begin();
    
   WiFiManager wifiManager;
   wifiManager.setDebugOutput(false);
   
   //reset settings - for testing
-  // wifiManager.resetSettings();
+  wifiManager.resetSettings();
 
   //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wifiManager.setAPCallback(configModeCallback);
 
   Serial.println("WiFiConfigStart");
+  transmitData("WiFiConfigStart");
 
   //fetches ssid and pass and tries to connect
   //if it does not connect it starts an access point with the specified name
@@ -65,9 +75,9 @@ void setup() {
     delay(1000);
   } 
   Serial.println("WiFiConfigEnd");
+  transmitData("WiFiConfigEnd");
 
-  Wire.begin();
-  Wire.setTimeout(100);
+  // Wire.setTimeout(100);
 
   // syncTime();
   getSchedule();
@@ -80,24 +90,23 @@ void setup() {
 int x = 1024;
 void loop() {
 
-  // Wire.beginTransmission(4);  
-  // Wire.println(x);              
-  // Wire.endTransmission();
+  // transmitData("Aboba");
 
-  // x++;
-  // delay(1000);
+  // fetchData();
 
-  fetchData();
-
-  delay(1000);
+  delay(3000);
 
 }
+
+
 
 void fetchData() {
   Wire.requestFrom(8, 70);    // request 6 bytes from peripheral device #8
   String str = "";
   while (Wire.available()) { // peripheral may send less than requested
     str = Wire.readStringUntil('$'); // receive a byte as character
+    str = Wire.readStringUntil('$'); // receive a byte as character
+    str = str.substring(0, str.lastIndexOf('.') + 3);
     // str.concat(c);
     // Serial.print(c);         // print the character
   }
