@@ -20,5 +20,4 @@ public class SensorsDto {
     private Double PH;
     private Double environmentTemperature;
     private Double liquidTemperature;
-    private LocalDateTime timeOfCheck;
 }
