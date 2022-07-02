@@ -19,7 +19,7 @@ public class Sensors {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
     private Integer CO2;
     private Double TDS;
     private Double PH;
