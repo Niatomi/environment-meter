@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class ReferenceDataDto {
+    private Integer c02;
 
     private Integer C02;
     private Double normalPh;
