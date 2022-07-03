@@ -67,9 +67,12 @@ byte customChar[] = {
   B00000
 };
 
-int standartCO2;
-float standartPH;
 boolean cooldownState;
+
+// Standarts
+int refC02 = 0; 
+float refNormalPh = 0; 
+float refVolume = 0;
 
 void setup() {
   Serial.setTimeout(5);
@@ -128,6 +131,17 @@ void receiveHandler (int size) {
 
   if (buff.equals("ReadSensors\r\n")) {
     cooldownState = false;
+  }
+
+  if (buff.substring(0, 3).equals("Ref")) {
+    buff = buff.substring(buff.indexOf(':') + 1, buff.length());
+
+    int refC02 = buff.substring(0, buff.indexOf(':')).toInt(); 
+    buff = buff.substring(buff.indexOf(':') + 1, buff.length());
+    
+    float refNormalPh = buff.substring(0, buff.indexOf(':')).toFloat();
+    
+    float refVolume = buff.substring(buff.indexOf(':') + 1, buff.indexOf('$')).toFloat();
   }
 
 }
