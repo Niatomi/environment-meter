@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 /**
  * @author niatomi
  */
@@ -14,6 +16,6 @@ import lombok.Setter;
 @Setter
 public class TimeScheduleDto {
 
-    private long timeOfCheck;
+    private List<Long> listOfSchedules;
 
 }
