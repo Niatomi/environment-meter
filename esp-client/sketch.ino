@@ -157,19 +157,11 @@ void setup() {
   WiFiManager wifiManager;
   wifiManager.setDebugOutput(false);
   
-  //reset settings - for testing
   // wifiManager.resetSettings();
 
-  //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wifiManager.setAPCallback(configModeCallback);
   transmitData("WiFiConfigStart");
-
-  //fetches ssid and pass and tries to connect
-  //if it does not connect it starts an access point with the specified name
-  //here  "AutoConnectAP"
-  //and goes into a blocking loop awaiting configuration
   if (!wifiManager.autoConnect("ESP8266 ConfigMe")) {
-    //reset and try again, or maybe put it to deep sleep
     ESP.reset();
     delay(1000);
   } 
@@ -261,7 +253,7 @@ void fetchData() {
     str = Wire.readStringUntil('$'); 
     parseData(str);    
     str = "";
-    printCurrentDataIntoSerial();
+    // printCurrentDataIntoSerial();
 
     while (Wire.available() > 0) {
       char c = Wire.read();
@@ -270,40 +262,39 @@ void fetchData() {
   }
   digitalWrite(FETCH_LED, LOW);
 
-  sendDataOnServer();
 
 }
 
 void parseData(String str) {
 
-    ppm = str.substring(0, str.indexOf(':')).toInt();
-    str = str.substring(str.indexOf(':') + 1, str.length());
+  ppm = str.substring(0, str.indexOf(':')).toInt();
+  str = str.substring(str.indexOf(':') + 1, str.length());
 
-    pHValue = str.substring(0, str.indexOf(':')).toFloat();
-    str = str.substring(str.indexOf(':') + 1, str.length());
+  pHValue = str.substring(0, str.indexOf(':')).toFloat();
+  str = str.substring(str.indexOf(':') + 1, str.length());
 
-    Etemp = str.substring(0, str.indexOf(':')).toFloat();
-    str = str.substring(str.indexOf(':') + 1, str.length());
+  Etemp = str.substring(0, str.indexOf(':')).toFloat();
+  str = str.substring(str.indexOf(':') + 1, str.length());
 
-    Wtemp = str.substring(0, str.indexOf(':')).toFloat();
-    str = str.substring(str.indexOf(':') + 1, str.length());
+  Wtemp = str.substring(0, str.indexOf(':')).toFloat();
+  str = str.substring(str.indexOf(':') + 1, str.length());
 
-    tdsSensor = str.substring(0, str.indexOf(':')).toFloat();
+  tdsSensor = str.substring(0, str.indexOf(':')).toFloat();
 
 }
 void printCurrentDataIntoSerial() {
-    Serial.println(now());
-    Serial.print("ppm: ");
-    Serial.println(ppm);
-    Serial.print("tdsSensor: ");
-    Serial.println(tdsSensor);
-    Serial.print("phValue: ");
-    Serial.println(pHValue);
-    Serial.print("ETemp: ");
-    Serial.println(Etemp);
-    Serial.print("WTemp: ");
-    Serial.println(Wtemp);
-    Serial.println();
+  Serial.println(now());
+  Serial.print("ppm: ");
+  Serial.println(ppm);
+  Serial.print("tdsSensor: ");
+  Serial.println(tdsSensor);
+  Serial.print("phValue: ");
+  Serial.println(pHValue);
+  Serial.print("ETemp: ");
+  Serial.println(Etemp);
+  Serial.print("WTemp: ");
+  Serial.println(Wtemp);
+  Serial.println();
 }
 
 /*
@@ -371,8 +362,8 @@ void syncTime () {
     client.stop();                                                         
     digitalWrite(HTTP_LED, LOW);
 
-    String StringCurrentTime = doc["time"].as<String>().substring(0, 10);   // get local date time witout ms
-    unsigned long CurrentTime = StringToULong(StringCurrentTime);           //   String в unsigned long
+    String StringCurrentTime = doc["time"].as<String>().substring(0, 10);
+    unsigned long CurrentTime = StringToULong(StringCurrentTime);
 
     doc.clear();  
     setTime(CurrentTime); 
@@ -403,40 +394,4 @@ void improvedDelay(unsigned int waitTime) {
         if (millis() - globalTimeBufferMillis > waitTime) 
             cooldownState = false;
     }
-}
-
-IPAddress local(192, 168, 137, 1);
-uint16_t port = 8080;
-void sendDataOnServer() {
-
-      Serial.print("In method");
-    if (client.connect(local, port)) {
-      Serial.print("Sending data");
-        digitalWrite(HTTP_LED, HIGH);
-        StaticJsonDocument<100> docOut;
-
-        docOut["environmentTemperature"] = Etemp;
-        docOut["liquidTemperature"] = Wtemp;
-        docOut["tds"] = tdsSensor;
-        docOut["co2"] = ppm;
-        docOut["ph"] = pHValue;
-
-        // Write response headers
-        client.println("POST /esp/sendSensorsData HTTP/1.1");
-        client.println("Host: " + local.toString() + ":8080");
-        client.println("Content-Type: application/json");
-        client.println("Connection: close");
-        client.print("Content-Length: ");
-        client.println(measureJsonPretty(docOut));
-        client.println();
-
-        // client.stop();
-
-        serializeJsonPretty(docOut, client);
-
-        client.stop();
-        digitalWrite(HTTP_LED, LOW);
-        
-    }
-
 }
