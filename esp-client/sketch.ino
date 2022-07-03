@@ -145,12 +145,10 @@ void sendDataOnServer() {
 
 void setup() {
   pinMode(HTTP_LED, OUTPUT);
-  pinMode(SERIAL_LED, OUTPUT);
+  pinMode(FETCH_LED, OUTPUT);
 
   digitalWrite(HTTP_LED, HIGH);
-  digitalWrite(SERIAL_LED, HIGH);
-
-  // Serial.setTimeout(5);
+  digitalWrite(FETCH_LED, HIGH);
 
   Serial.begin(9600);
   Serial.setDebugOutput(true); 
