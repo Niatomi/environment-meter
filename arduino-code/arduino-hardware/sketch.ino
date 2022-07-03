@@ -162,6 +162,12 @@ void loop() {
     improvedDelay(3000);
   }
 
+  if (isSuccessfulConnection) {
+    printWiFiSuccessOnLcd();
+    improvedDelay(3000);
+    isSuccessfulConnection = false;
+  }
+
   getData();
   // alertCO2();
   printDataOnLcd();
@@ -175,6 +181,14 @@ void printWiFiMessageOnLcd() {
   lcd.print(" Connect via Wi-Fi");
   lcd.setCursor(0, 2);
   lcd.print(" ESP8266 ConfigMe");
+}
+
+void printWiFiSuccessOnLcd() {
+  lcd.clear();
+  lcd.setCursor(0, 1);
+  lcd.print(" Successful connect");
+  lcd.setCursor(0, 2);
+  lcd.print(" to local WiFi");
 }
 
 void getPHData() {
