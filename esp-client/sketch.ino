@@ -112,6 +112,40 @@ void fetchData() {
   }
   Serial.println(str);
 
+  sendDataOnServer();
+
+}
+
+void parseData(String str) {
+
+    ppm = str.substring(0, str.indexOf(':')).toInt();
+    str = str.substring(str.indexOf(':') + 1, str.length());
+
+    pHValue = str.substring(0, str.indexOf(':')).toFloat();
+    str = str.substring(str.indexOf(':') + 1, str.length());
+
+    Etemp = str.substring(0, str.indexOf(':')).toFloat();
+    str = str.substring(str.indexOf(':') + 1, str.length());
+
+    Wtemp = str.substring(0, str.indexOf(':')).toFloat();
+    str = str.substring(str.indexOf(':') + 1, str.length());
+
+    tdsSensor = str.substring(0, str.indexOf(':')).toFloat();
+
+}
+void printCurrentDataIntoSerial() {
+    Serial.println(now());
+    Serial.print("ppm: ");
+    Serial.println(ppm);
+    Serial.print("tdsSensor: ");
+    Serial.println(tdsSensor);
+    Serial.print("phValue: ");
+    Serial.println(pHValue);
+    Serial.print("ETemp: ");
+    Serial.println(Etemp);
+    Serial.print("WTemp: ");
+    Serial.println(Wtemp);
+    Serial.println();
 }
 
 /*
