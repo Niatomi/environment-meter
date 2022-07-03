@@ -18,7 +18,7 @@
             <column name="liquid_temperature" type="real(2)">
                 <constraints nullable="false"/>
             </column>
-            <column name="local_date_time" type="datetime">
+            <column name="time_of_check" type="datetime">
                 <constraints nullable="false"/>
             </column>
             <column name="ph" type="real(2)">
