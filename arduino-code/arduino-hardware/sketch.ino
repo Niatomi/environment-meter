@@ -128,9 +128,10 @@ void receiveHandler (int size) {
 }
 
 void requestHandler() {
-  // getData();
-  String msg = "";
-  Wire.print("$Data:");
+
+  Wire.print("$");
+  Wire.print(ppm);
+  Wire.print(":");
   Wire.print(pHValue);
   Wire.print(":");
   Wire.print(Etemp);
