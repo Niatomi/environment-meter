@@ -309,8 +309,43 @@ void printCurrentDataIntoSerial() {
 /*
 * Получаем расписание проверок
 */
+const size_t capacity = 256;                                            
+DynamicJsonDocument schedule(capacity);     
 void getSchedule() {
 
+  if (client.connect(local, port)) {
+    digitalWrite(HTTP_LED, HIGH);
+    // Send HTTP request
+    client.println("GET /esp/getTimeSchedule HTTP/1.0\r\n");
+    client.println("Host: " + local.toString() + ":8080");
+
+    // Skip HTTP headers
+    char endOfHeaders[] = "\r\n\r\n";
+    if (!client.find(endOfHeaders)) {                      
+      // Serial.println("Invalid response");
+      return;
+    }
+    schedule.clear();
+    deserializeJson(schedule, client);
+    client.stop();
+    digitalWrite(HTTP_LED, LOW);
+  }
+  
+}
+
+/*
+* Устанавливаем минимальное время для ожидания из расписания проверок
+*/
+int currentTimeIndex = -1;
+void setCurrentAwaitingTime() {
+  currentTimeIndex++;
+  if (currentTimeIndex == 10) {
+    getSchedule();
+    currentTimeIndex = 0;
+  }
+
+  awaitingCurrentTime = schedule["listOfSchedules"][currentTimeIndex].as<long>();
+  
 }
 
 
