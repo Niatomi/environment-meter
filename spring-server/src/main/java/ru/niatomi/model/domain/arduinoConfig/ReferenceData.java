@@ -25,4 +25,6 @@ public class ReferenceData {
 
     private Double volume;
 
+    private boolean isUpdated;
+
 }
