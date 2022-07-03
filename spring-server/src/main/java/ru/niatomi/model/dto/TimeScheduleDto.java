@@ -9,6 +9,7 @@ import lombok.Setter;
  * @author niatomi
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class TimeScheduleDto {
