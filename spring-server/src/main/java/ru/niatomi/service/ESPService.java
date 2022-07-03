@@ -4,8 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.niatomi.model.dto.ReferenceDataDto;
 import ru.niatomi.model.dto.SensorsDto;
 import ru.niatomi.model.dto.TimeScheduleDto;
-
-import java.util.List;
+import ru.niatomi.model.dto.UpdatableDto;
 
 /**
  * @author niatomi
@@ -17,6 +16,14 @@ public interface ESPService {
 
     void saveSensorData(SensorsDto sensorsDto);
 
-    List<TimeScheduleDto> getTimeSchedule();
+    TimeScheduleDto getTimeSchedule();
+
+    UpdatableDto checkOnReferenceUpdate();
+
+    void stateReferenceUpdate();
+
+    UpdatableDto checkOnTimeReferenceUpdate();
+
+    void stateTimeReferenceUpdate();
 
 }

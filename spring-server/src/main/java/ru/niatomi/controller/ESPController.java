@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import ru.niatomi.model.dto.ReferenceDataDto;
 import ru.niatomi.model.dto.SensorsDto;
 import ru.niatomi.model.dto.TimeScheduleDto;
-
-import java.util.List;
+import ru.niatomi.model.dto.UpdatableDto;
 
 /**
  * @author niatomi
@@ -23,11 +22,24 @@ public interface ESPController {
     public ResponseEntity<ReferenceDataDto> getReferenceData();
 
     @GetMapping("/getTimeSchedule")
-    public ResponseEntity<List<TimeScheduleDto>> getTimeSchedule();
+    public ResponseEntity<TimeScheduleDto> getTimeSchedule();
 
     @PostMapping("/sendSensorsData")
     public void saveSensorData (
             @RequestBody SensorsDto sensorsDto
             );
+
+    @GetMapping("/checkOnReferenceUpdate")
+    public ResponseEntity<UpdatableDto> checkOnReferenceUpdate();
+
+    @PostMapping("/stateReferenceUpdateState")
+    public void stateReferenceUpdate();
+
+    @GetMapping("/checkOnTimeReferenceUpdate")
+    public ResponseEntity<UpdatableDto> checkOnTimeReferenceUpdate();
+
+    @PostMapping("/stateTimeReferenceUpdate")
+    public void stateTimeReferenceUpdate();
+
 
 }
