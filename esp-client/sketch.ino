@@ -37,10 +37,111 @@ float Wtemp = 0.00;
 int ppm = 0;
 float tdsSensor = 0.00;
 
+int refC02 = 0; 
+float refNormalPh = 0; 
+float refVolume = 0;
+
 String regionID = "51"; 
 
 unsigned long lastTimeSync;
 unsigned long globalTimeBufferMillis = 0;
+
+unsigned long awaitingCurrentTime;
+unsigned long lastTimeCheckOnReferenceUpdate = 0;
+
+boolean isNeedToUpdate = false;
+
+IPAddress local(192, 168, 0, 14);
+uint16_t port = 8080;
+void getReferenceData() {
+
+  if (client.connect(local, port)) {
+    digitalWrite(HTTP_LED, HIGH);
+    // Send HTTP request
+    client.println("GET /esp/getReferenceData HTTP/1.0\r\n");
+    client.println("Host: " + local.toString() + ":8080");
+
+    // Skip HTTP headers
+    char endOfHeaders[] = "\r\n\r\n";
+    if (!client.find(endOfHeaders)) {                      
+      // Serial.println("Invalid response");
+      return;
+    }
+
+    const size_t capacity = 96;                                            
+    DynamicJsonDocument doc(capacity); 
+    doc.clear();
+
+    deserializeJson(doc, client);
+    client.stop();
+
+    refC02 = doc["c02"].as<int>();
+    refNormalPh = doc["normalPh"].as<float>();
+    refVolume = doc["volume"].as<float>();
+
+    doc.clear();
+    digitalWrite(HTTP_LED, LOW);
+
+  }
+
+}
+
+void updateRefernceCycle() {
+  getReferenceData();
+  sendStateReferenceUpdate();
+  String msg = "Ref:";
+  msg.concat(refC02);
+  msg.concat(":");
+  msg.concat(refNormalPh);
+  msg.concat(":");
+  msg.concat(refVolume);
+  msg.concat("$");
+  transmitData(msg);
+
+}
+
+void sendStateReferenceUpdate() {
+
+  if (client.connect(local, port)) {
+    digitalWrite(HTTP_LED, HIGH);
+
+    // Write response headers
+    client.println("POST /esp/stateReferenceUpdateState HTTP/1.1");
+    client.println("Host: " + local.toString() + ":8080");
+    client.println();
+    client.stop();
+
+    digitalWrite(HTTP_LED, LOW);
+  }
+
+}
+void sendDataOnServer() {
+
+  if (client.connect(local, port)) {
+    digitalWrite(HTTP_LED, HIGH);
+    StaticJsonDocument<100> docOut;
+
+    docOut["environmentTemperature"] = Etemp;
+    docOut["liquidTemperature"] = Wtemp;
+    docOut["tds"] = tdsSensor;
+    docOut["co2"] = ppm;
+    docOut["ph"] = pHValue;
+
+    // Write response headers
+    client.println("POST /esp/sendSensorsData HTTP/1.1");
+    client.println("Host: " + local.toString() + ":8080");
+    client.println("Content-Type: application/json");
+    client.println("Connection: close");
+    client.print("Content-Length: ");
+    client.println(measureJsonPretty(docOut));
+    client.println();
+
+    serializeJsonPretty(docOut, client);
+
+    client.stop();
+    digitalWrite(HTTP_LED, LOW);
+  }
+}
 
 void setup() {
   pinMode(HTTP_LED, OUTPUT);
