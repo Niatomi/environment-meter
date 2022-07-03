@@ -7,9 +7,8 @@ import ru.niatomi.controller.ESPController;
 import ru.niatomi.model.dto.ReferenceDataDto;
 import ru.niatomi.model.dto.SensorsDto;
 import ru.niatomi.model.dto.TimeScheduleDto;
+import ru.niatomi.model.dto.UpdatableDto;
 import ru.niatomi.service.ESPService;
-
-import java.util.List;
 
 /**
  * @author niatomi
@@ -26,12 +25,32 @@ public class ESPControllerImpl implements ESPController {
     }
 
     @Override
-    public ResponseEntity<List<TimeScheduleDto>> getTimeSchedule() {
-        return null;
+    public ResponseEntity<TimeScheduleDto> getTimeSchedule() {
+        return ResponseEntity.ok(espService.getTimeSchedule());
     }
 
     @Override
     public void saveSensorData(SensorsDto sensorsDto) {
         espService.saveSensorData(sensorsDto);
+    }
+
+    @Override
+    public ResponseEntity<UpdatableDto> checkOnReferenceUpdate() {
+        return ResponseEntity.ok(espService.checkOnReferenceUpdate());
+    }
+
+    @Override
+    public void stateReferenceUpdate() {
+        espService.stateReferenceUpdate();
+    }
+
+    @Override
+    public ResponseEntity<UpdatableDto> checkOnTimeReferenceUpdate() {
+        return null;
+    }
+
+    @Override
+    public void stateTimeReferenceUpdate() {
+
     }
 }
