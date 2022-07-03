@@ -39,7 +39,7 @@ const float m = -5.70; // Slope of straight line (Y = mx + C)
 #define CO2 A3
 SoftwareSerial mySerial(7, 6); // TX, RX
 //Final
-unsigned int ppm = 0;
+int ppm = 0;
 byte cmd[9] = {0xFF, 0x01, 0x86, 0x00, 0x00, 0x00, 0x00, 0x00, 0x79}; 
 unsigned char response[9];
 
@@ -50,7 +50,7 @@ unsigned char response[9];
 */
 #define TDS A2
 // Final
-float tdsSensor;
+float tdsSensor = 0.00;
 
 LiquidCrystal_I2C lcd (0x27, 20, 4);
 
