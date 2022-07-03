@@ -105,6 +105,7 @@ void setup() {
 
 int aboba = 1024;
 boolean isWiFiAlert = false;
+boolean isSuccessfulConnection = false;
 void receiveHandler (int size) {
   String buff = "";
   while (Wire.available() > 0) // loop through all but the last
@@ -116,14 +117,18 @@ void receiveHandler (int size) {
 
   if (buff.equals("WiFiConfigStart\r\n")) {
     isWiFiAlert = true;
-
+    cooldownState = false;
   }
 
   if (buff.equals("WiFiConfigEnd\r\n")) {
     isWiFiAlert = false;
+    isSuccessfulConnection = true;
+    cooldownState = false;
   }
-  
-  Serial.println(buff);
+
+  if (buff.equals("ReadSensors\r\n")) {
+    cooldownState = false;
+  }
 
 }
 
@@ -138,17 +143,9 @@ void requestHandler() {
   Wire.print(":");
   Wire.print(Wtemp);
   Wire.print(":");
-  Wire.print(ppm);
-  Wire.print(":");
   Wire.print(tdsSensor);
   Wire.println("$");
 
-  
-  
-  // char buffer[70];
-  // for (int i = 0; i < 70; i++)
-  //   buffer[i] = '$'; 
-  // msg.toCharArray(buffer, 70);
 }
 
 
@@ -217,45 +214,7 @@ void getPHData() {
     pHValue = phVoltage*m+C;
     Wtemp = sensors.getTempCByIndex(0);
     float TempDif = fabs(Etemp-Wtemp); //calculating the absolute value of floating
-    // lcd.clear();
-    // lcd.setCursor(0,0);
-    // lcd.print("Env.Tmp.");
-    // lcd.setCursor(12,0);
-    // lcd.print("Sol.Tmp.");
-    // lcd.setCursor(1,1);
-    // lcd.print(Etemp);
-    // lcd.setCursor(6,1);
-    // lcd.write(B11011111);
-    // lcd.setCursor(7,1);
-    // lcd.print("C");
-    // lcd.setCursor(13,1);
-    // lcd.print(Wtemp);
-    // lcd.setCursor(18,1);
-    // lcd.write(B11011111);
-    // lcd.setCursor(19,1);
-    // lcd.print("C");
-    // lcd.setCursor(0,2);
-    // lcd.print("PH Value of Solution");
-    // lcd.setCursor(3,3);
-    // lcd.print(pHValue);
-    // lcd.setCursor(9,3);
-    // lcd.print("PH");
-    // if (TempDif<= 5)
-    // {
-    //   lcd.setCursor(11,3);
-    //   lcd.write(0);
-    //   lcd.setCursor(14,3);
-    //   lcd.print("0.1PH");
-    //   }
- 
-    // if (TempDif> 5)
-    // {
-    //   lcd.setCursor(11,3);
-    //   lcd.write(0);
-    //   lcd.setCursor(14,3);
-    //   lcd.print("0.2PH");
-    //   }
-    //   delay(1000);
+
 }
 
 /*
@@ -353,7 +312,7 @@ void printDataOnLcd() {
   lcd.print(" ppm");
 
   lcd.setCursor(0, 2);
-  lcd.print("PH:  ");
+  lcd.print("PH : ");
   lcd.print(pHValue);
 
   lcd.setCursor(0, 3);
@@ -361,7 +320,7 @@ void printDataOnLcd() {
   lcd.print(Etemp);
   lcd.print("/");
   lcd.print(Wtemp);
-  lcd.print(" ");
+  lcd.print("");
   lcd.write(B11011111);
   lcd.print("C");
 
