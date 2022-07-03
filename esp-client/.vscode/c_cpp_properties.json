@@ -20,7 +20,7 @@
             "includePath": [
                 "C:\\Users\\playe\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\tools\\sdk\\include",
                 "C:\\Users\\playe\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\tools\\sdk\\lwip2\\include",
-                "c:\\GIT\\environment-meter\\esp-client\\build\\core",
+                "c:\\GIT\\arduino-byte-learn\\build\\core",
                 "C:\\Users\\playe\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\cores\\esp8266",
                 "C:\\Users\\playe\\AppData\\Local\\Arduino15\\packages\\esp8266\\hardware\\esp8266\\3.0.2\\variants\\nodemcu",
                 "C:\\Users\\playe\\Documents\\Arduino\\libraries\\ArduinoJson\\src",
