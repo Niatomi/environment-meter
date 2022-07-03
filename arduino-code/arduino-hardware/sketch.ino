@@ -297,7 +297,7 @@ void getPPMTDS() {
 * завышенном колличестве CO2 в воздухе
 */
 void alertCO2() {
-  if (ppm >= standartCO2) {
+  if (ppm >= refC02) {
     tone(ZOOMER, 100, 100);
     improvedDelay(200);
     noTone(ZOOMER);
