@@ -26,14 +26,15 @@ void transmitData(String data) {
 
 WiFiClient client; 
 
-float pHValue = 0;
-float Etemp = 0;
-float Wtemp = 0;
-unsigned int ppm = 0;
-float tdsSensor;
 
 int standartCO2 = 1500;
 float standartPH = 6.1;
+
+float pHValue = 0.00;
+float Etemp = 0.00;
+float Wtemp = 0.00;
+int ppm = 0;
+float tdsSensor = 0.00;
 
 String regionID = "51"; 
 
@@ -57,12 +58,10 @@ void setup() {
   wifiManager.setDebugOutput(false);
   
   //reset settings - for testing
-  wifiManager.resetSettings();
+  // wifiManager.resetSettings();
 
   //set callback that gets called when connecting to previous WiFi fails, and enters Access Point mode
   wifiManager.setAPCallback(configModeCallback);
-
-  Serial.println("WiFiConfigStart");
   transmitData("WiFiConfigStart");
 
   //fetches ssid and pass and tries to connect
@@ -74,43 +73,44 @@ void setup() {
     ESP.reset();
     delay(1000);
   } 
-  Serial.println("WiFiConfigEnd");
   transmitData("WiFiConfigEnd");
 
-  // Wire.setTimeout(100);
 
-  // syncTime();
+  syncTime();
   getSchedule();
 
   digitalWrite(HTTP_LED, LOW);
   digitalWrite(SERIAL_LED, LOW);
 }
 
-
-int x = 1024;
 void loop() {
 
   // transmitData("Aboba");
 
-  // fetchData();
+  fetchData();
 
-  delay(3000);
+  delay(10000);
 
 }
 
 
-
 void fetchData() {
-  Wire.requestFrom(8, 70);    // request 6 bytes from peripheral device #8
+  transmitData("ReadSensors");
+  improvedDelay(1000);
+  Wire.requestFrom(8, 50);
   String str = "";
-  while (Wire.available()) { // peripheral may send less than requested
-    str = Wire.readStringUntil('$'); // receive a byte as character
-    str = Wire.readStringUntil('$'); // receive a byte as character
-    str = str.substring(0, str.lastIndexOf('.') + 3);
-    // str.concat(c);
-    // Serial.print(c);         // print the character
+  while (Wire.available()) { 
+    str = Wire.readStringUntil('$'); 
+    str = Wire.readStringUntil('$'); 
+    parseData(str);    
+    str = "";
+    printCurrentDataIntoSerial();
+
+    while (Wire.available() > 0) {
+      char c = Wire.read();
+    }
+    
   }
-  Serial.println(str);
 
   sendDataOnServer();
 
@@ -210,4 +210,40 @@ void improvedDelay(unsigned int waitTime) {
         if (millis() - globalTimeBufferMillis > waitTime) 
             cooldownState = false;
     }
+}
+
+IPAddress local(192, 168, 137, 1);
+uint16_t port = 8080;
+void sendDataOnServer() {
+
+      Serial.print("In method");
+    if (client.connect(local, port)) {
+      Serial.print("Sending data");
+        digitalWrite(HTTP_LED, HIGH);
+        StaticJsonDocument<100> docOut;
+
+        docOut["environmentTemperature"] = Etemp;
+        docOut["liquidTemperature"] = Wtemp;
+        docOut["tds"] = tdsSensor;
+        docOut["co2"] = ppm;
+        docOut["ph"] = pHValue;
+
+        // Write response headers
+        client.println("POST /esp/sendSensorsData HTTP/1.1");
+        client.println("Host: " + local.toString() + ":8080");
+        client.println("Content-Type: application/json");
+        client.println("Connection: close");
+        client.print("Content-Length: ");
+        client.println(measureJsonPretty(docOut));
+        client.println();
+
+        // client.stop();
+
+        serializeJsonPretty(docOut, client);
+
+        client.stop();
+        digitalWrite(HTTP_LED, LOW);
+        
+    }
+
 }
