@@ -179,18 +179,73 @@ void setup() {
   syncTime();
   getSchedule();
 
+  updateRefernceCycle();
+
+  setCurrentAwaitingTime();
+
   digitalWrite(HTTP_LED, LOW);
   digitalWrite(FETCH_LED, LOW);
 
 }
 
+
 void loop() {
+  awaitEvent();
+}
 
-  // transmitData("Aboba");
+void awaitEvent() {
 
-  fetchData();
+  // Синхронизируем время каждую неделю
+  if (now() - lastTimeSync >= 604800) {
+    syncTime();
+  }
 
-  delay(10000);
+  // По расписанию отправляем данные на сервер
+  if (now() >= awaitingCurrentTime) {
+    fetchData();
+    sendDataOnServer();
+    setCurrentAwaitingTime();
+  }
+
+  if (now() - lastTimeCheckOnReferenceUpdate >= 180) {
+    lastTimeCheckOnReferenceUpdate = now();
+    checkOnReferenceUpdate();
+    if (isNeedToUpdate) {
+      updateRefernceCycle();
+    }
+  }
+
+}
+
+
+void checkOnReferenceUpdate() {
+
+  if (client.connect(local, port)) {
+    digitalWrite(HTTP_LED, HIGH);
+    // Send HTTP request
+    client.println("GET /esp/checkOnReferenceUpdate HTTP/1.0\r\n");
+    client.println("Host: " + local.toString() + ":8080");
+
+    // Skip HTTP headers
+    char endOfHeaders[] = "\r\n\r\n";
+    if (!client.find(endOfHeaders)) {                      
+      // Serial.println("Invalid response");
+      return;
+    }
+
+    const size_t capacity = 48;                                            
+    DynamicJsonDocument doc(capacity); 
+    doc.clear();
+    deserializeJson(doc, client);
+    client.stop();
+    doc.clear();
+
+    if (doc["updatable"].as<boolean>())
+      isNeedToUpdate = true;
+
+    digitalWrite(HTTP_LED, LOW);
+
+  }
 
 }
 
