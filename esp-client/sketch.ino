@@ -9,7 +9,7 @@
 #include <Wire.h>
 
 #define HTTP_LED D8
-#define SERIAL_LED D7
+#define FETCH_LED D7
 
 void configModeCallback (WiFiManager *myWiFiManager) {
   WiFi.softAPIP();
@@ -17,10 +17,11 @@ void configModeCallback (WiFiManager *myWiFiManager) {
 }
 
 void transmitData(String data) {
-
+  digitalWrite(FETCH_LED, HIGH);
   Wire.beginTransmission(8);  
   Wire.println(data);              
   Wire.endTransmission();
+  digitalWrite(FETCH_LED, LOW);
 
 }
 
@@ -80,7 +81,8 @@ void setup() {
   getSchedule();
 
   digitalWrite(HTTP_LED, LOW);
-  digitalWrite(SERIAL_LED, LOW);
+  digitalWrite(FETCH_LED, LOW);
+
 }
 
 void loop() {
@@ -95,6 +97,7 @@ void loop() {
 
 
 void fetchData() {
+  digitalWrite(FETCH_LED, HIGH);
   transmitData("ReadSensors");
   improvedDelay(1000);
   Wire.requestFrom(8, 50);
@@ -111,6 +114,7 @@ void fetchData() {
     }
     
   }
+  digitalWrite(FETCH_LED, LOW);
 
   sendDataOnServer();
 
