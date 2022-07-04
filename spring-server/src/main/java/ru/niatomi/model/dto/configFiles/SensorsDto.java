@@ -1,4 +1,4 @@
-package ru.niatomi.model.dto;
+package ru.niatomi.model.dto.configFiles;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

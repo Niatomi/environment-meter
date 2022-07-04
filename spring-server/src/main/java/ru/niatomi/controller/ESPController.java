@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import ru.niatomi.model.dto.ReferenceDataDto;
-import ru.niatomi.model.dto.SensorsDto;
-import ru.niatomi.model.dto.TimeScheduleDto;
-import ru.niatomi.model.dto.UpdatableDto;
+import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
+import ru.niatomi.model.dto.configFiles.SensorsDto;
+import ru.niatomi.model.dto.time.TimeScheduleDto;
+import ru.niatomi.model.dto.configFiles.UpdatableDto;
 
 /**
  * @author niatomi

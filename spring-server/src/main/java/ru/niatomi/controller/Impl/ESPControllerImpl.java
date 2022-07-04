@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import ru.niatomi.controller.ESPController;
-import ru.niatomi.model.dto.ReferenceDataDto;
-import ru.niatomi.model.dto.SensorsDto;
-import ru.niatomi.model.dto.TimeScheduleDto;
-import ru.niatomi.model.dto.UpdatableDto;
+import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
+import ru.niatomi.model.dto.configFiles.SensorsDto;
+import ru.niatomi.model.dto.time.TimeScheduleDto;
+import ru.niatomi.model.dto.configFiles.UpdatableDto;
 import ru.niatomi.service.ESPService;
 
 /**
