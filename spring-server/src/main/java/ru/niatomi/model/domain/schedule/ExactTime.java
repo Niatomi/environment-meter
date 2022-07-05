@@ -4,6 +4,7 @@ import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
+import javax.validation.constraints.Future;
 import java.time.LocalDateTime;
 
 /**
@@ -16,6 +17,7 @@ public class ExactTime {
     @Id
     private Integer id;
 
+    @Future
     private LocalDateTime exactTime;
 
 }
