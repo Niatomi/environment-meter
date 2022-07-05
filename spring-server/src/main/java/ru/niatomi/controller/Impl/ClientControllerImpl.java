@@ -27,7 +27,7 @@ public class ClientControllerImpl implements ClientController {
     }
 
     @Override
-    public ResponseEntity<String> addTimePlan(@RequestBody(content = {new TimePlanDto(new Year(1234))}) TimePlanDto timePlanDto) {
+    public ResponseEntity<String> addTimePlan(@RequestBody TimePlanDto timePlanDto) {
         return null;
     }
 
