@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.niatomi.mapper.ReferenceDataMapper;
 import ru.niatomi.mapper.SensorsMapper;
+import ru.niatomi.model.domain.arduinoConfig.UpdatableConfig;
 import ru.niatomi.model.domain.sensor.Sensors;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
 import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
@@ -12,6 +13,7 @@ import ru.niatomi.model.dto.time.TimeScheduleDto;
 import ru.niatomi.model.dto.configFiles.UpdatableDto;
 import ru.niatomi.repository.ReferenceDataRepository;
 import ru.niatomi.repository.SensorsRepository;
+import ru.niatomi.repository.UpdatableConfigRepository;
 import ru.niatomi.service.ESPService;
 
 import java.time.LocalDateTime;
@@ -32,6 +34,8 @@ public class ESPServiceImpl implements ESPService {
 
     private final ReferenceDataRepository referenceDataRepository;
     private final ReferenceDataMapper referenceDataMapper;
+
+    private final UpdatableConfigRepository updatableConfigRepository;
 
     @Override
     public ReferenceDataDto getReferenceData() {
@@ -63,26 +67,28 @@ public class ESPServiceImpl implements ESPService {
 
     @Override
     public UpdatableDto checkOnReferenceUpdate() {
-        ReferenceData referenceData = referenceDataRepository.findById(1).get();
-        return new UpdatableDto(referenceData.isUpdated());
+        UpdatableConfig updatableConfig = updatableConfigRepository.findById(1).get();
+        return new UpdatableDto(updatableConfig.isReferenceIsUpdatable());
+
     }
 
     @Override
     public void stateReferenceUpdate() {
-        ReferenceData referenceData = referenceDataRepository.findById(1).get();
-        referenceData.setUpdated(false);
-        referenceDataRepository.save(referenceData);
+        UpdatableConfig updatableConfig = updatableConfigRepository.findById(1).get();
+        updatableConfig.setReferenceIsUpdatable(false);
+        updatableConfigRepository.save(updatableConfig);
     }
 
-
-    // TODO: реализовать тут логику
     @Override
     public UpdatableDto checkOnTimeReferenceUpdate() {
-        return null;
+        UpdatableConfig updatableConfig = updatableConfigRepository.findById(1).get();
+        return new UpdatableDto(updatableConfig.isTimeIsUpdatable());
     }
 
     @Override
     public void stateTimeReferenceUpdate() {
-
+        UpdatableConfig updatableConfig = updatableConfigRepository.findById(1).get();
+        updatableConfig.setTimeIsUpdatable(false);
+        updatableConfigRepository.save(updatableConfig);
     }
 }
