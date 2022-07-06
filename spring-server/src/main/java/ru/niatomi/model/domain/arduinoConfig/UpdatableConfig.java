@@ -1,5 +1,6 @@
 package ru.niatomi.model.domain.arduinoConfig;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -12,6 +13,7 @@ import javax.persistence.Id;
  */
 @Document
 @Data
+@AllArgsConstructor
 public class UpdatableConfig {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
