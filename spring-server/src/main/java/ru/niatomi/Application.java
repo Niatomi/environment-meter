@@ -6,7 +6,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
+import ru.niatomi.model.domain.arduinoConfig.UpdatableConfig;
 import ru.niatomi.repository.ReferenceDataRepository;
+import ru.niatomi.repository.UpdatableConfigRepository;
 
 /**
  * @author niatomi
@@ -18,15 +20,17 @@ public class Application {
     }
 
     @Bean
-    CommandLineRunner runner(ReferenceDataRepository referenceDataRepository) {
+    CommandLineRunner runner(ReferenceDataRepository referenceDataRepository,
+                             UpdatableConfigRepository updatableConfigRepository) {
         return args -> {
             ReferenceData referenceData = new ReferenceData();
             referenceData.setId(1);
             referenceData.setVolume(5.5);
             referenceData.setNormalPh(5.5);
             referenceData.setC02(1500);
-            referenceData.setUpdated(false);
             referenceDataRepository.save(referenceData);
+
+            updatableConfigRepository.save(new UpdatableConfig(1, true, true));
 
         };
 
