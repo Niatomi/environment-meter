@@ -41,5 +41,4 @@ public interface ESPController {
     @PostMapping("/stateTimeReferenceUpdate")
     public void stateTimeReferenceUpdate();
 
-
 }
