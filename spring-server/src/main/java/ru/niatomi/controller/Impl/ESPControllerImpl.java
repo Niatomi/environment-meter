@@ -46,11 +46,11 @@ public class ESPControllerImpl implements ESPController {
 
     @Override
     public ResponseEntity<UpdatableDto> checkOnTimeReferenceUpdate() {
-        return null;
+        return ResponseEntity.ok(espService.checkOnTimeReferenceUpdate());
     }
 
     @Override
     public void stateTimeReferenceUpdate() {
-
+        espService.stateTimeReferenceUpdate();
     }
 }
