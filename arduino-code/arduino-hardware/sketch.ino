@@ -74,7 +74,7 @@ int refC02 = 0;
 float refNormalPh = 0; 
 float refVolume = 0;
 
-void setup() {
+void setup() {  
   Serial.setTimeout(5);
   Serial.begin(9600);
   mySerial.begin(9600);
@@ -99,7 +99,7 @@ void setup() {
   // lcd.clear();
   // lcd.setCursor(0, 0);
 
-  Wire.begin(8);                // join i2c bus with address #4         
+  Wire.begin(51);                // join i2c bus with address #4         
   // Wire.setTimeout(100);
   Wire.onRequest(requestHandler);
   Wire.onReceive(receiveHandler);
@@ -110,12 +110,15 @@ int aboba = 1024;
 boolean isWiFiAlert = false;
 boolean isSuccessfulConnection = false;
 void receiveHandler (int size) {
+  Serial.println("receiveHandler");
+
   String buff = "";
   while (Wire.available() > 0) // loop through all but the last
   {
     char c = Wire.read(); // receive byte as a character
     buff.concat(c);         // print the character
   }
+  Serial.println(buff);
 
 
   if (buff.equals("WiFiConfigStart\r\n")) {
@@ -147,7 +150,8 @@ void receiveHandler (int size) {
 }
 
 void requestHandler() {
-
+  Serial.println("requestHandler");
+  
   Wire.print("$");
   Wire.print(ppm);
   Wire.print(":");
@@ -159,6 +163,9 @@ void requestHandler() {
   Wire.print(":");
   Wire.print(tdsSensor);
   Wire.println("$");
+
+   
+
 
 }
 
@@ -183,7 +190,7 @@ void loop() {
   getData();
   // alertCO2();
   printDataOnLcd();
-  improvedDelay(10000);
+  improvedDelay(60000);
 
 }
 
@@ -361,5 +368,19 @@ void improvedDelay(unsigned int waitTime) {
     while (cooldownState) {
         if (millis() - globalTimeBufferMillis > waitTime) 
             cooldownState = false;
+    }
+}
+
+void waitMicros() {
+    for (int i = 0; i < 200; i++) {
+        
+        unsigned int microsTimerBuffer = micros();
+        
+        boolean exitState = true;
+        while (exitState) {
+            if (micros() - microsTimerBuffer > 50000) {
+                exitState = false;
+            }
+        }
     }
 }
