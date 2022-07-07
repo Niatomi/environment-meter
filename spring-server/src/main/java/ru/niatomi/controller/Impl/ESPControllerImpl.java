@@ -30,8 +30,9 @@ public class ESPControllerImpl implements ESPController {
     }
 
     @Override
-    public void saveSensorData(SensorsDto sensorsDto) {
+    public ResponseEntity<String> saveSensorData(SensorsDto sensorsDto) {
         espService.saveSensorData(sensorsDto);
+        return ResponseEntity.ok("Data saved");
     }
 
     @Override
