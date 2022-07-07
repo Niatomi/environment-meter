@@ -59,7 +59,7 @@ public class ESPServiceImpl implements ESPService {
         TimeScheduleDto schedule = new TimeScheduleDto();
         List<Long> unixTime = new ArrayList<>();
         for (int i = 1; i <= 10; i++) {
-            unixTime.add(LocalDateTime.now().plusMinutes(2*i).toEpochSecond(ZoneOffset.of("+04:00")));
+            unixTime.add(LocalDateTime.now().plusSeconds(30*i).toEpochSecond(ZoneOffset.of("+04:00")));
         }
         schedule.setListOfSchedules(unixTime);
         return schedule;
