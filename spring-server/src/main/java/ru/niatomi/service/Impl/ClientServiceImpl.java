@@ -6,13 +6,17 @@ import lombok.Setter;
 import org.springframework.stereotype.Service;
 import ru.niatomi.mapper.ReferenceDataMapper;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
+import ru.niatomi.model.domain.schedule.ExactTime;
+import ru.niatomi.model.domain.schedule.PeriodTime;
+import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
 import ru.niatomi.model.dto.data.DataDto;
 import ru.niatomi.model.dto.time.ExactTimeDto;
 import ru.niatomi.model.dto.time.TimePlanAndExactDto;
 import ru.niatomi.model.dto.time.TimePlanDto;
-import ru.niatomi.repository.SensorsRepository;
-import ru.niatomi.repository.UpdatableConfigRepository;
+import ru.niatomi.repository.*;
 import ru.niatomi.service.ClientService;
+
+import java.time.LocalDateTime;
 
 /**
  * @author niatomi
@@ -59,6 +63,10 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public String addTimePlan(TimePlanDto timePlanDto) {
+//        PeriodTime periodTime = new PeriodTime(
+//                periodTimeRepository.count() + 1,
+//                timePlanDto.
+//        );
         return null;
     }
 
