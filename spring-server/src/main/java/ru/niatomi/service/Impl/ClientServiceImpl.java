@@ -42,7 +42,19 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public String addExactTime(ExactTimeDto exactTimeDto) {
-        return null;
+        ExactTime exactTime = new ExactTime(
+                exactTimeRepository.count() + 1,
+                LocalDateTime.of(
+                        LocalDateTime.now().getYear(),
+                        exactTimeDto.getMonth(),
+                        exactTimeDto.getDay(),
+                        exactTimeDto.getHours(),
+                        exactTimeDto.getMinutes(),
+                        exactTimeDto.getSeconds()
+                ));
+
+        exactTimeRepository.save(exactTime);
+        return "Exact time saved";
     }
 
     @Override
