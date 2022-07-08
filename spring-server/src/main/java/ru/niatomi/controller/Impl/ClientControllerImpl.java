@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.niatomi.controller.ClientController;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
+import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
 import ru.niatomi.model.dto.data.DataDto;
 import ru.niatomi.model.dto.time.ExactTimeDto;
 import ru.niatomi.model.dto.time.TimePlanAndExactDto;
@@ -18,7 +19,7 @@ import ru.niatomi.model.dto.time.TimePlanDto;
 @RequestMapping("/client")
 public class ClientControllerImpl implements ClientController {
     @Override
-    public ResponseEntity<String> updateReferenceData(ReferenceData referenceData) {
+    public ResponseEntity<String> updateReferenceData(ReferenceDataDto referenceData) {
         return null;
     }
 

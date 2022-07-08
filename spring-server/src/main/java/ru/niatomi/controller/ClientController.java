@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
+import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
 import ru.niatomi.model.dto.data.DataDto;
 import ru.niatomi.model.dto.time.ExactTimeDto;
 import ru.niatomi.model.dto.time.TimePlanAndExactDto;
@@ -20,7 +21,7 @@ import ru.niatomi.model.dto.time.TimePlanDto;
 public interface ClientController {
 
     @PostMapping("/updateReference")
-    public ResponseEntity<String> updateReferenceData(@RequestBody ReferenceData referenceData);
+    public ResponseEntity<String> updateReferenceData(@RequestBody ReferenceDataDto referenceData);
 
     @PostMapping("/addExactTime")
     public ResponseEntity<String> addExactTime(@RequestBody ExactTimeDto exactTimeDto);
