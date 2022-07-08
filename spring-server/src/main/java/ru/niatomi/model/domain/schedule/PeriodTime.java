@@ -1,5 +1,6 @@
 package ru.niatomi.model.domain.schedule;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 import ru.niatomi.model.domain.validation.I2CCheckTimeRestrictions;
@@ -14,11 +15,12 @@ import java.time.LocalDateTime;
  */
 @Document
 @Data
+@AllArgsConstructor
 public class PeriodTime {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private Long startTime;
 
