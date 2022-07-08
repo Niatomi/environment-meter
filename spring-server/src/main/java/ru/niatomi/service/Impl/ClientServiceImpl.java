@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
+import ru.niatomi.mapper.ReferenceDataMapper;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
 import ru.niatomi.model.dto.data.DataDto;
 import ru.niatomi.model.dto.time.ExactTimeDto;
@@ -24,6 +25,12 @@ public class ClientServiceImpl implements ClientService {
 
     private final UpdatableConfigRepository updatableConfigRepository;
     private final SensorsRepository sensorsRepository;
+    private final ReferenceDataRepository referenceDataRepository;
+
+    private final ExactTimeRepository exactTimeRepository;
+    private final PeriodTimeRepository periodTimeRepository;
+
+    private final ReferenceDataMapper referenceDataMapper;
 
     @Override
     public String updateReferenceData(ReferenceData referenceData) {
