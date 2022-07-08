@@ -33,8 +33,11 @@ public class ClientServiceImpl implements ClientService {
     private final ReferenceDataMapper referenceDataMapper;
 
     @Override
-    public String updateReferenceData(ReferenceData referenceData) {
-        return null;
+    public String updateReferenceData(ReferenceDataDto referenceData) {
+        ReferenceData map = referenceDataMapper.map(referenceData);
+        map.setId(1);
+        referenceDataRepository.save(map);
+        return "Data saved";
     }
 
     @Override
