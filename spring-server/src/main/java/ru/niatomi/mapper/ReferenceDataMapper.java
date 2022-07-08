@@ -15,5 +15,6 @@ import ru.niatomi.model.dto.configFiles.ReferenceDataDto;
 public interface ReferenceDataMapper {
 
     ReferenceDataDto map(ReferenceData referenceData);
+    ReferenceData map(ReferenceDataDto referenceData);
 
 }
