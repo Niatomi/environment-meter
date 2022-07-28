@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 import ru.niatomi.model.domain.sensor.Sensors;
 import ru.niatomi.model.dto.configFiles.SensorsDto;
+import ru.niatomi.model.dto.data.DataDto;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -24,5 +25,7 @@ public interface SensorsMapper {
 
     @Mapping(target = "timeOfCheck", expression = "java(LocalDateTime.now())")
     Sensors map(SensorsDto dto);
+
+    DataDto map(Sensors sensors);
 
 }
