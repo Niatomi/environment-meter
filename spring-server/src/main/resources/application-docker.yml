@@ -1,0 +1,30 @@
+spring:
+  name: test
+  activate:
+    on-profile: docker
+  datasource:
+    platform: postgres
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+    driverClassName: org.postgresql.Driver
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  liquibase:
+    changelog: classpath:/db/master-changelog.xml
+    contexts: test
+  #    secureParsing: false
+  #    url: mongodb://hostname:27017/test-enviroment
+  jpa:
+    show-sql: true
+  data:
+    mongodb:
+      authentication-database: admin
+      username: rootuser
+      password: rootpass
+      database: test-enviroment
+      port: 27017
+      host: localhost
+      auto-index-creation: true
