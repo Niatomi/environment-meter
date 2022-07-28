@@ -1,10 +1,12 @@
 package ru.niatomi.service.Impl;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.stereotype.Service;
 import ru.niatomi.mapper.ReferenceDataMapper;
+import ru.niatomi.mapper.SensorsMapper;
 import ru.niatomi.model.domain.arduinoConfig.ReferenceData;
 import ru.niatomi.model.domain.schedule.ExactTime;
 import ru.niatomi.model.domain.schedule.PeriodTime;
@@ -16,7 +18,10 @@ import ru.niatomi.model.dto.time.TimePlanDto;
 import ru.niatomi.repository.*;
 import ru.niatomi.service.ClientService;
 
+import java.text.DecimalFormat;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author niatomi
@@ -35,6 +40,7 @@ public class ClientServiceImpl implements ClientService {
     private final PeriodTimeRepository periodTimeRepository;
 
     private final ReferenceDataMapper referenceDataMapper;
+    private final SensorsMapper sensorsMapper;
 
     @Override
     public String updateReferenceData(ReferenceDataDto referenceData) {
@@ -76,7 +82,34 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
-    public DataDto getData() {
-        return null;
+    public List<DataDto> getData() {
+        List<DataDto> dataDtos = new ArrayList<>();
+
+        sensorsRepository.findAll().forEach(sensors -> {
+            sensors.setEnvironmentTemperature(
+            Double.parseDouble(sensors
+                    .getEnvironmentTemperature()
+                    .toString()
+                    .substring(
+                            0,
+                            sensors
+                                    .getEnvironmentTemperature()
+                                    .toString()
+                                    .indexOf('.') + 3)));
+
+            sensors.setLiquidTemperature(
+            Double.parseDouble(sensors
+                    .getLiquidTemperature()
+                    .toString()
+                    .substring(
+                            0,
+                            sensors
+                                    .getLiquidTemperature()
+                                    .toString()
+                                    .indexOf('.') + 3)));
+
+            dataDtos.add(sensorsMapper.map(sensors));
+        });
+        return dataDtos;
     }
 }
