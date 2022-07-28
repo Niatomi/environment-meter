@@ -39,7 +39,7 @@ public class ClientControllerImpl implements ClientController {
     }
 
     @Override
-    public ResponseEntity<DataDto> getData() {
-        return null;
+    public ResponseEntity<List<DataDto>> getData() {
+        return ResponseEntity.ok(clientService.getData());
     }
 }

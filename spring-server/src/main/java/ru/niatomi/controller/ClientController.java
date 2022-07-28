@@ -13,6 +13,8 @@ import ru.niatomi.model.dto.time.ExactTimeDto;
 import ru.niatomi.model.dto.time.TimePlanAndExactDto;
 import ru.niatomi.model.dto.time.TimePlanDto;
 
+import java.util.List;
+
 /**
  * @author niatomi
  */
@@ -33,7 +35,7 @@ public interface ClientController {
     public ResponseEntity<TimePlanAndExactDto> getAllTime();
 
     @GetMapping("/getData")
-    public ResponseEntity<DataDto> getData();
+    public ResponseEntity<List<DataDto>> getData();
 
 
 }
