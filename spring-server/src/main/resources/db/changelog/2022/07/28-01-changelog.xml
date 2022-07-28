@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+    <changeSet id="add-some-data" author="Niatomi">
+        <insert tableName="sensors">
+            <column name="id" value="1"/>
+            <column name="co2" value="700"/>
+            <column name="environment_temperature" value="30.12"/>
+            <column name="liquid_temperature" value="32.12"/>
+            <column name="time_of_check" valueDate="2022-06-01T10:00:00"/>
+            <column name="ph" value="500"/>
+            <column name="tds" value="550"/>
+        </insert>
+        <insert tableName="sensors">
+            <column name="id" value="2"/>
+            <column name="co2" value="800"/>
+            <column name="environment_temperature" value="20.12"/>
+            <column name="liquid_temperature" value="22.12"/>
+            <column name="time_of_check" valueDate="2022-06-02T10:00:00"/>
+            <column name="ph" value="800"/>
+            <column name="tds" value="550"/>
+        </insert>
+        <insert tableName="sensors">
+            <column name="id" value="3"/>
+            <column name="co2" value="600"/>
+            <column name="environment_temperature" value="15.61"/>
+            <column name="liquid_temperature" value="12.53"/>
+            <column name="time_of_check" valueDate="2022-06-03T10:00:00"/>
+            <column name="ph" value="800"/>
+            <column name="tds" value="550"/>
+        </insert>
+        <insert tableName="sensors">
+            <column name="id" value="4"/>
+            <column name="co2" value="500"/>
+            <column name="environment_temperature" value="40.12"/>
+            <column name="liquid_temperature" value="12.51"/>
+            <column name="time_of_check" valueDate="2022-06-04T10:00:00"/>
+            <column name="ph" value="800"/>
+            <column name="tds" value="550"/>
+        </insert>
+        <insert tableName="sensors">
+            <column name="id" value="5"/>
+            <column name="co2" value="780"/>
+            <column name="environment_temperature" value="35.51"/>
+            <column name="liquid_temperature" value="12.14"/>
+            <column name="time_of_check" valueDate="2022-06-05T10:00:00"/>
+            <column name="ph" value="800"/>
+            <column name="tds" value="550"/>
+        </insert>
+        <insert tableName="sensors">
+            <column name="id" value="6"/>
+            <column name="co2" value="1244"/>
+            <column name="environment_temperature" value="33.91"/>
+            <column name="liquid_temperature" value="10.12"/>
+            <column name="time_of_check" valueDate="2022-06-06T10:00:00"/>
+            <column name="ph" value="800"/>
+            <column name="tds" value="550"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
