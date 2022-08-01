@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Sensors {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
     private Integer CO2;
     private Double TDS;
