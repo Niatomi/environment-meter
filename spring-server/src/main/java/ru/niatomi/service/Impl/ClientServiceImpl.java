@@ -95,7 +95,7 @@ public class ClientServiceImpl implements ClientService {
                             sensors
                                     .getEnvironmentTemperature()
                                     .toString()
-                                    .indexOf('.') + 3)));
+                                    .indexOf('.') + 2)));
 
             sensors.setLiquidTemperature(
             Double.parseDouble(sensors
@@ -106,7 +106,7 @@ public class ClientServiceImpl implements ClientService {
                             sensors
                                     .getLiquidTemperature()
                                     .toString()
-                                    .indexOf('.') + 3)));
+                                    .indexOf('.') + 2)));
 
             dataDtos.add(sensorsMapper.map(sensors));
         });
