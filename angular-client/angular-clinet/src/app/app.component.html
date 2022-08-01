@@ -1,0 +1,36 @@
+<div class="container">
+  <nav
+    class="navbar navbar-expand-lg navbar-dark bg-dark"
+    style="margin-bottom: 20px"
+  >
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse" id="navbarColor02">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/sensors/enviroment-temperture"
+              >Environment Temperature</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/sensors/liquid-temperture"
+              >Liquid Temperature</a
+            >
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/sensors/tds">TDS</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/sensors/co">CO2</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/sensors/ph">PH</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  <hr />
+  <div>
+    <router-outlet></router-outlet>
+  </div>
+</div>
