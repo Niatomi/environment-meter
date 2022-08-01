@@ -47,6 +47,10 @@ public class ESPServiceImpl implements ESPService {
     @Override
     public void saveSensorData(SensorsDto sensorsDto) {
         Sensors map = sensorsMapper.map(sensorsDto);
+        System.out.println(sensorsRepository.count() + 1);
+
+        map.setId(sensorsRepository.count() + 1);
+        System.out.println(map);
         sensorsRepository.save(map);
     }
 
